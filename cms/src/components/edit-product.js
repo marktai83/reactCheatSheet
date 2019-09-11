@@ -1,47 +1,58 @@
 import React, { Component } from 'react';
-let products =  [
-    {
-        id: 1,
-        name: 'Apple',
-        price: '10'
-    },
-    {
-        id: 2,
-        name: 'Banana',
-        price: '15'
-    },
-    {
-        id: 3,
-        name: 'Coconut',
-        price: '20'
-    }
+import axios from 'axios';
 
-]
 export default class EditProduct extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            products: products,
+            products: [],
             name: '',
             price: ''
         };
-    }
-    componentDidMount () {
-        this.getProductDetail();
-    }
-    getProductDetail(){
-        let productNo = this.props.match.params.id;
-        let product = products.filter(item =>{
-            return item.id == productNo;
-        })
-        product = product && product[0] ? product[0] : null;
-        this.setState({
-            name: product.name,
-            price: product.price
-        })
+        this.updateProduct = this.updateProduct.bind(this);
+        this.onChangeProductName = this.onChangeProductName.bind(this);
+        this.onChangeProductPrice = this.onChangeProductPrice.bind(this);
     }
 
+    // for single value change
+    onChangeProductName(e) {
+        console.log(e.target);
+        this.setState({ name : e.target.value})
+    }
+    onChangeProductPrice(e) {
+        console.log(e.target);
+        this.setState({ price : e.target.value})
+    }
+    componentDidMount () {
+        this.getProduct();
+    }
+    getProduct(){
+        let productNo = this.props.match.params.id;
+        axios.get('http://localhost:4000/api/product/'+productNo)
+            .then( res => {
+                console.log(res.data.data);
+                this.setState({
+                    name: res.data.data.name,
+                    price: res.data.data.price
+                })
+            })
+    }
+    updateProduct() {
+        let productNo = this.props.match.params.id;
+        let sendData = {
+            name: this.state.name,
+            price: this.state.price
+        }
+        axios.post('http://localhost:4000/api/product/'+productNo, sendData)
+            .then( res => {
+                console.log(res.data);
+                this.setState({
+                    name: res.data.name,
+                    price: res.data.price
+                })
+            })
+    }
     render() {
         return (
             <div>
@@ -54,7 +65,7 @@ export default class EditProduct extends Component {
                     <input type="text" className="form-control" value={this.state.price} onChange={this.onChangeProductPrice}/>
                 </div>
                 <div>
-                    <input type="submit" value="Update Product" className="btn btn-primary" />
+                    <input type="submit" value="Update Product" className="btn btn-info" onClick={this.updateProduct}/>
                 </div>
             </div>
         )

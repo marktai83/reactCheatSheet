@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import axios from 'axios';
 export default class AddProduct extends Component {
 
     constructor(props) {
@@ -24,7 +24,17 @@ export default class AddProduct extends Component {
     }
     onSubmitProduct(e) {
         console.log(e.target);
-        this.setState({ price : e.target.value})
+        //avoid directly post to backend
+        e.preventDefault();
+
+        const newProduct = {
+            name: this.state.name,
+            price: this.state.price
+        }
+        axios.post('http://localhost:4000/api/product', newProduct)
+            .then( res => console.log(res.data));
+
+        this.setState({ name:'', price:''})
     }
 
     render() {
@@ -38,7 +48,7 @@ export default class AddProduct extends Component {
                     <input type="text" className="form-control" value={this.state.price} onChange={this.onChangeProductPrice}/>
                 </div>
                 <div>
-                    <input type="submit" value="Create Todo" className="btn btn-primary" onChange={this.onSubmitProduct}/>
+                    <input type="submit" value="Create Product" className="btn btn-info" onClick={this.onSubmitProduct}/>
                 </div>
             </div>
         )

@@ -15,8 +15,6 @@ class App extends Component {
                   <ul>
                     <li><Link to="/">Main Page</Link></li>
                     <li><Link to="/addProduct">Add Product</Link></li>
-                    <li><Link to="/editProduct/:id">Update Product</Link></li>
-                    <li><Link to="/delete/:id">Delete Product</Link></li>
                   </ul>
 
                 </div>
